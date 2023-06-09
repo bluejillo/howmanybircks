@@ -2,7 +2,7 @@ import { useState } from 'react'
 import styled from "styled-components";
 import './App.css'
 
-const StyledLabelGroup = styled.div`
+const StyledInputGroup = styled.div`
     display: grid;
     grid-template-columns: max-content min-content;
     gap: 0.5rem;
@@ -20,29 +20,102 @@ const StyledLegend = styled.legend`
     padding: 0;
 `;
 
-function App() {
-    const [barrierType, setBarrierType] = useState("line");
-    const handleBarrierTypeChange = (e) => {
-        setBarrierType(e.target.value);
+const StyledSubmitButton = styled.button`
+    border: none;
+    background-color: #262626;
+    color: #FFF;
+    font-weight: 700;
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    
+    &:hover {
+        background-color: #FFF;
+        color: #262626;
     }
+`;
+
+function BarrierMeasurement({isCircleBarrier, handleBarrierMeasurementChange}) {
+    if(isCircleBarrier) {
+        return (
+            <StyledInputGroup>
+                <label htmlFor={'barrierRadius'}>Barrier Radius (in feet):</label>
+                <input type={"number"} id={'barrierRadius'}
+                    onChange={handleBarrierMeasurementChange}/>
+            </StyledInputGroup>
+        )
+    } else {
+        return (
+            <StyledInputGroup>
+                <label htmlFor={'barrierLength'}>Barrier Length (in feet):</label>
+                <input type={"number"} id={'barrierLength'}
+                    onChange={handleBarrierMeasurementChange}/>
+            </StyledInputGroup>
+        )
+    }
+}
+
+function App() {
+    const [isCircleBarrier, setIsCircleBarrier] = useState(false);
+    const [barrierMeasurement, setBarrierMeasurement] = useState(0);
+    const [brickLength, setBrickLength] = useState(0);
+    const [brickLayers, setBrickLayers] = useState(0);
+    const handleBarrierTypeChange = (e) => {
+        e.preventDefault();
+        setIsCircleBarrier(e.target.value);
+    };
+    const handleBarrierMeasurementChange = (e) => {
+        e.preventDefault();
+        setBarrierMeasurement(parseInt(e.target.value));
+    };
+    const handleBrickLengthChange = (e) => {
+        e.preventDefault();
+        setBrickLength(e.target.value);
+    };
+    const handleBrickLayersChange = (e) => {
+        e.preventDefault();
+        setBrickLayers(e.target.value);
+    };
+    const calculateBricks = (e) => {
+        e.preventDefault();
+        console.log('fired')
+        let barrierLengthInches;
+        if(barrierMeasurement === 2) {
+            console.log('got here')
+        }
+    };
     return (
         <>
             <h1>How Many Bricks?</h1>
-            <StyledLabelGroup>
+            <StyledInputGroup>
                 <StyledFieldSet>
-                    <StyledLegend>Barrier Type:</StyledLegend>
+                    <StyledLegend>Is it a circle?</StyledLegend>
                     <div>
-                        <input type={'radio'} value={'line'} id={'barrierTypeLine'} name={'barrierType'} checked={true}
+                        <input type={'radio'} value={false} id={'barrierTypeLine'} name={'barrierType'} checked={true}
                         onChange={handleBarrierTypeChange}/>
-                        <label htmlFor={'barrierTypeLine'}>Line</label>
+                        <label htmlFor={'barrierTypeLine'}>No</label>
                     </div>
                     <div>
-                        <input type={'radio'} value={'circle'} id={'barrierTypeCircle'} name={'barrierType'}
+                        <input type={'radio'} value={true} id={'barrierTypeCircle'} name={'barrierType'}
                         onChange={handleBarrierTypeChange}/>
-                        <label htmlFor={'barrierTypeCircle'}>Circle</label>
+                        <label htmlFor={'barrierTypeCircle'}>Yes</label>
                     </div>
                 </StyledFieldSet>
-            </StyledLabelGroup>
+            </StyledInputGroup>
+            <BarrierMeasurement isCircleBarrier={isCircleBarrier}
+                handleBarrierMeasurementChange={handleBarrierMeasurementChange}/>
+            <StyledInputGroup>
+                <label htmlFor={'brickMeasurement'}>
+                    Brick Length (in inches):
+                </label>
+                <input type={'number'} id={'brickMeasurement'}
+                    onChange={handleBrickLengthChange}/>
+            </StyledInputGroup>
+            <StyledInputGroup>
+                <label htmlFor={'brickLayers'}>How many layers?</label>
+                <input type={'number'} id={'brickLayers'}
+                    onChange={handleBrickLayersChange}/>
+            </StyledInputGroup>
+            <StyledSubmitButton onClick={calculateBricks}>Calculate Bricks!</StyledSubmitButton>
         </>
     )
 }
