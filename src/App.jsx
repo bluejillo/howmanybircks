@@ -32,8 +32,8 @@ function App() {
                 <StyledFieldSet>
                     <StyledLegend>Barrier Type:</StyledLegend>
                     <div>
-                        <input type={'radio'} value={'line'} id={'barrierTypeLine'} name={'barrierType'}
-                        onChange={handleBarrierTypeChange} checked={true}/>
+                        <input type={'radio'} value={'line'} id={'barrierTypeLine'} name={'barrierType'} checked={true}
+                        onChange={handleBarrierTypeChange}/>
                         <label htmlFor={'barrierTypeLine'}>Line</label>
                     </div>
                     <div>
