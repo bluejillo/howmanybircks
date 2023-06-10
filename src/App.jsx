@@ -34,13 +34,24 @@ const StyledSubmitButton = styled.button`
     }
 `;
 
-function BarrierMeasurement({isCircleBarrier, handleBarrierMeasurementChange}) {
+const CalculatedBrickDisplay = styled.div`
+    font-weight: 600;
+    font-size: 1.3rem;
+    margin-block-start: 1.5rem;
+`;
+
+const CalculatedBrickSpan = styled.span`
+    font-size: 2rem;
+`;
+
+//does not need to be a function
+function BarrierMeasurement({isCircleBarrier, handleTextInputChange, setBarrierMeasurement}) {
     if(isCircleBarrier) {
         return (
             <StyledInputGroup>
-                <label htmlFor={'barrierRadius'}>Barrier Radius (in feet):</label>
-                <input type={"number"} id={'barrierRadius'}
-                    onChange={handleBarrierMeasurementChange}/>
+                <label htmlFor={'barrierDiameter'}>Barrier Diameter (in feet):</label>
+                <input type={"number"} id={'barrierDiameter'}
+                    onChange={(e) => handleTextInputChange(e, setBarrierMeasurement)}/>
             </StyledInputGroup>
         )
     } else {
@@ -48,9 +59,20 @@ function BarrierMeasurement({isCircleBarrier, handleBarrierMeasurementChange}) {
             <StyledInputGroup>
                 <label htmlFor={'barrierLength'}>Barrier Length (in feet):</label>
                 <input type={"number"} id={'barrierLength'}
-                    onChange={handleBarrierMeasurementChange}/>
+                    onChange={(e) => handleTextInputChange(e, setBarrierMeasurement)}/>
             </StyledInputGroup>
         )
+    }
+}
+
+function CalculatedBricks({calculatedBrickNum}) {
+    if(calculatedBrickNum > 0) {
+        return(
+            <CalculatedBrickDisplay>
+                <CalculatedBrickSpan>{calculatedBrickNum}</CalculatedBrickSpan>
+                <span> Bricks needed!</span>
+            </CalculatedBrickDisplay>
+        );
     }
 }
 
@@ -59,29 +81,22 @@ function App() {
     const [barrierMeasurement, setBarrierMeasurement] = useState(0);
     const [brickLength, setBrickLength] = useState(0);
     const [brickLayers, setBrickLayers] = useState(0);
+    const [calculatedBrickNum, setCalculatedBrickNum] = useState(0);
     const handleBarrierTypeChange = (e) => {
         e.preventDefault();
         setIsCircleBarrier(e.target.value);
     };
-    const handleBarrierMeasurementChange = (e) => {
+    const handleTextInputChange = (e, callback) => {
         e.preventDefault();
-        setBarrierMeasurement(parseInt(e.target.value));
-    };
-    const handleBrickLengthChange = (e) => {
-        e.preventDefault();
-        setBrickLength(e.target.value);
-    };
-    const handleBrickLayersChange = (e) => {
-        e.preventDefault();
-        setBrickLayers(e.target.value);
-    };
+        callback(parseInt(e.target.value));
+    }
     const calculateBricks = (e) => {
         e.preventDefault();
-        console.log('fired')
-        let barrierLengthInches;
-        if(barrierMeasurement === 2) {
-            console.log('got here')
+        let barrierLengthInches = barrierMeasurement * 12 * brickLayers;
+        if(isCircleBarrier) {
+            barrierLengthInches = Math.PI.toFixed(3) * barrierLengthInches;
         }
+        setCalculatedBrickNum(Math.ceil(barrierLengthInches / brickLength));
     };
     return (
         <>
@@ -102,20 +117,22 @@ function App() {
                 </StyledFieldSet>
             </StyledInputGroup>
             <BarrierMeasurement isCircleBarrier={isCircleBarrier}
-                handleBarrierMeasurementChange={handleBarrierMeasurementChange}/>
+                handleTextInputChange={handleTextInputChange}
+                setBarrierMeasurement={setBarrierMeasurement}/>
             <StyledInputGroup>
                 <label htmlFor={'brickMeasurement'}>
                     Brick Length (in inches):
                 </label>
                 <input type={'number'} id={'brickMeasurement'}
-                    onChange={handleBrickLengthChange}/>
+                    onChange={(e) => handleTextInputChange(e, setBrickLength)}/>
             </StyledInputGroup>
             <StyledInputGroup>
                 <label htmlFor={'brickLayers'}>How many layers?</label>
                 <input type={'number'} id={'brickLayers'}
-                    onChange={handleBrickLayersChange}/>
+                    onChange={(e) => handleTextInputChange(e, setBrickLayers)}/>
             </StyledInputGroup>
             <StyledSubmitButton onClick={calculateBricks}>Calculate Bricks!</StyledSubmitButton>
+            <CalculatedBricks calculatedBrickNum={calculatedBrickNum}/>
         </>
     )
 }
