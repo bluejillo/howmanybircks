@@ -120,15 +120,18 @@ function App() {
         }
         setCalculatedBrickPrice(calculatedPrice.toFixed(2))
     }
+    const calculateBulkBricks = () => {
+        return (Math.floor((calculatedBrickNum / bulkNum)) * bulkNum);
+    }
     const calculateBulkPrice = () => {
-        let bulkBricks = Math.floor((calculatedBrickNum / bulkNum));
+        let bulkBricks = calculateBulkBricks();
         return bulkBricks > 0 ? bulkBricks * bulkBrickPrice : 0;
     }
     
     const calculateRegularBrickPrice = () => {
-        let remainingBricks;
+        let remainingBricks = calculatedBrickNum;
         if(bulkNum > 0) {
-            remainingBricks = ((calculatedBrickNum / bulkNum) % 1) * 100;
+            remainingBricks -= calculateBulkBricks();
         }
         return remainingBricks > 0 ? remainingBricks * regularBrickPrice : 0;
     }
