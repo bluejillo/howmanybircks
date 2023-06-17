@@ -115,10 +115,10 @@ function App() {
     const getPrice = () => {
         let calculatedPrice = calculateRegularBrickPrice();
 
-        if(isBulkPricing) {
+        if(isBulkPricing === 'true') {
             calculatedPrice = calculateBulkPrice() + calculatedPrice;
         }
-        setCalculatedBrickPrice(calculatedPrice.toFixed(2));
+        setCalculatedBrickPrice(calculatedPrice.toFixed(2))
     }
     const calculateBulkPrice = () => {
         let bulkBricks = Math.floor((calculatedBrickNum / bulkNum));
@@ -126,7 +126,10 @@ function App() {
     }
     
     const calculateRegularBrickPrice = () => {
-        let remainingBricks = ((calculatedBrickNum / bulkNum) % 1) * 100;
+        let remainingBricks;
+        if(bulkNum > 0) {
+            remainingBricks = ((calculatedBrickNum / bulkNum) % 1) * 100;
+        }
         return remainingBricks > 0 ? remainingBricks * regularBrickPrice : 0;
     }
     return (
@@ -199,9 +202,9 @@ function App() {
                             onChange={(e) => handleStringToIntInputChange(e, setRegularBrickPrice)}/>
                     </StyledInputGroup>
                     <StyledSubmitButton onClick={getPrice}>Calculate Price</StyledSubmitButton>
-                    {calculatedBrickPrice > 0 && <CalculatedPrice calculatedPrice={calculatedBrickPrice}/>}
                 </>
             )}
+            {calculatedBrickPrice > 0 && <CalculatedPrice calculatedPrice={calculatedBrickPrice}/>}
         </>
     )
 }
