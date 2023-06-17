@@ -1,4 +1,6 @@
 import { useState } from 'react'
+import { CalculatedBricks } from "./components/CalculatedBricks.jsx";
+import {CalculatedPrice } from "./components/CalculatedPrice.jsx";
 import styled from "styled-components";
 import './App.css'
 
@@ -40,27 +42,20 @@ const StyledSubmitButton = styled.button`
     }
 `;
 
-const CalculatedDisplay = styled.div`
-    font-weight: 600;
-    font-size: 1.3rem;
-    margin-block: 1.5rem;
-    margin-inline: 3rem;
-`;
+// const CalculatedNumSpan = styled.span`
+//     font-size: 2rem;
+// `;
 
-const CalculatedNumSpan = styled.span`
-    font-size: 2rem;
-`;
-
-function CalculatedBricks({calculatedBrickNum}) {
-    if(calculatedBrickNum > 0) {
-        return(
-            <CalculatedDisplay>
-                <CalculatedNumSpan>{calculatedBrickNum}</CalculatedNumSpan>
-                <span> Bricks needed!</span>
-            </CalculatedDisplay>
-        );
-    }
-}
+// function CalculatedBricks({calculatedBrickNum}) {
+//     if(calculatedBrickNum > 0) {
+//         return(
+//             <CalculatedDisplay>
+//                 <CalculatedNumSpan>{calculatedBrickNum}</CalculatedNumSpan>
+//                 <span> Bricks needed!</span>
+//             </CalculatedDisplay>
+//         );
+//     }
+// }
 
 function BulkOrder({isBulkPricing, inputChangeHandler, setBulkNum, setBulkPrice}) {
     if(isBulkPricing === 'true') {
@@ -81,16 +76,16 @@ function BulkOrder({isBulkPricing, inputChangeHandler, setBulkNum, setBulkPrice}
     }
 }
 
-function CalculatedPrice({calculatedPrice}) {
-    if(calculatedPrice > 0) {
-        return(
-            <CalculatedDisplay>
-                <span>Total Cost: </span>
-                <CalculatedNumSpan>${calculatedPrice}</CalculatedNumSpan>
-            </CalculatedDisplay>
-            )
-    }
-}
+// function CalculatedPrice({calculatedPrice}) {
+//     if(calculatedPrice > 0) {
+//         return(
+//             <CalculatedDisplay>
+//                 <span>Total Cost: </span>
+//                 <CalculatedNumSpan>${calculatedPrice}</CalculatedNumSpan>
+//             </CalculatedDisplay>
+//             )
+//     }
+// }
 
 function App() {
     const [isCircleBarrier, setIsCircleBarrier] = useState('false');
@@ -104,24 +99,20 @@ function App() {
     const [regularBrickPrice, setRegularBrickPrice] = useState(0);
     const [calculatedBrickPrice, setCalculatedBrickPrice] = useState(0);
     const handleRadioInputChange = (e, callback) => {
-        e.preventDefault();
         callback(e.target.value);
     };
     
-    const handleTextInputChange = (e, callback) => {
-        e.preventDefault();
+    const handleStringToIntInputChange = (e, callback) => {
         callback(parseInt(e.target.value));
     }
-    const calculateBricks = (e) => {
-        e.preventDefault();
+    const calculateBricks = () => {
         let barrierLengthInches = barrierMeasurement * 12 * brickLayers;
         if(isCircleBarrier) {
             barrierLengthInches = Math.PI.toFixed(3) * barrierLengthInches;
         }
         setCalculatedBrickNum(Math.ceil(barrierLengthInches / brickLength));
     };
-    const getPrice = (e) => {
-        e.preventDefault();
+    const getPrice = () => {
         let calculatedPrice = calculateRegularBrickPrice();
 
         if(isBulkPricing) {
@@ -161,24 +152,24 @@ function App() {
             <StyledInputGroup>
                 <label htmlFor={'barrierLength'}>Barrier {isCircleBarrier === 'true' ? 'Diameter' : 'Length'} (in feet):</label>
                 <input type={"number"} id={'barrierLength'}
-                    onChange={(e) => handleTextInputChange(e, setBarrierMeasurement)}/>
+                    onChange={(e) => handleStringToIntInputChange(e, setBarrierMeasurement)}/>
             </StyledInputGroup>
             <StyledInputGroup>
                 <label htmlFor={'brickMeasurement'}>
                     Brick Length (in inches):
                 </label>
                 <input type={'number'} id={'brickMeasurement'}
-                    onChange={(e) => handleTextInputChange(e, setBrickLength)}/>
+                    onChange={(e) => handleStringToIntInputChange(e, setBrickLength)}/>
             </StyledInputGroup>
             <StyledInputGroup>
                 <label htmlFor={'brickLayers'}>How many layers?</label>
                 <input type={'number'} id={'brickLayers'}
-                    onChange={(e) => handleTextInputChange(e, setBrickLayers)}/>
+                    onChange={(e) => handleStringToIntInputChange(e, setBrickLayers)}/>
             </StyledInputGroup>
             <StyledSubmitButton onClick={calculateBricks}>Calculate Bricks</StyledSubmitButton>
-            <CalculatedBricks calculatedBrickNum={calculatedBrickNum}/>
             {calculatedBrickNum > 0 && (
                 <>
+                    <CalculatedBricks calculatedBrickNum={calculatedBrickNum}/>
                     <h2>Pricing</h2>
                     <StyledInputGroup>
                         <StyledFieldSet>
@@ -205,10 +196,10 @@ function App() {
                     <StyledInputGroup>
                         <label htmlFor={'brickPrice'}>Price:</label>
                         <input type={'number'} id={'brickPrice'}
-                            onChange={(e) => handleTextInputChange(e, setRegularBrickPrice)}/>
+                            onChange={(e) => handleStringToIntInputChange(e, setRegularBrickPrice)}/>
                     </StyledInputGroup>
                     <StyledSubmitButton onClick={getPrice}>Calculate Price</StyledSubmitButton>
-                    <CalculatedPrice calculatedPrice={calculatedBrickPrice}/>
+                    {calculatedBrickPrice > 0 && <CalculatedPrice calculatedPrice={calculatedBrickPrice}/>}
                 </>
             )}
         </>
