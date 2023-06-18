@@ -4,8 +4,6 @@ import {CalculatedPrice } from "./components/CalculatedPrice.jsx";
 import styled from "styled-components";
 import './App.css'
 
-//to do disable pricing if number of bricks haven't been calculated
-
 const StyledInputGroup = styled.div`
     display: grid;
     grid-template-columns: max-content min-content;
@@ -42,21 +40,6 @@ const StyledSubmitButton = styled.button`
     }
 `;
 
-// const CalculatedNumSpan = styled.span`
-//     font-size: 2rem;
-// `;
-
-// function CalculatedBricks({calculatedBrickNum}) {
-//     if(calculatedBrickNum > 0) {
-//         return(
-//             <CalculatedDisplay>
-//                 <CalculatedNumSpan>{calculatedBrickNum}</CalculatedNumSpan>
-//                 <span> Bricks needed!</span>
-//             </CalculatedDisplay>
-//         );
-//     }
-// }
-
 function BulkOrder({isBulkPricing, inputChangeHandler, setBulkNum, setBulkPrice}) {
     if(isBulkPricing === 'true') {
         return(
@@ -68,24 +51,13 @@ function BulkOrder({isBulkPricing, inputChangeHandler, setBulkNum, setBulkPrice}
                 </StyledInputGroup>
                 <StyledInputGroup>
                     <label htmlFor={'bulkPrice'}>Bulk Price:</label>
-                    <input type={'number'} id={'bulkPrice'}
+                    <input type={'number'} step={".01"} id={'bulkPrice'}
                         onChange={(e) => inputChangeHandler(e, setBulkPrice)}/>
                 </StyledInputGroup>
             </>
         );
     }
 }
-
-// function CalculatedPrice({calculatedPrice}) {
-//     if(calculatedPrice > 0) {
-//         return(
-//             <CalculatedDisplay>
-//                 <span>Total Cost: </span>
-//                 <CalculatedNumSpan>${calculatedPrice}</CalculatedNumSpan>
-//             </CalculatedDisplay>
-//             )
-//     }
-// }
 
 function App() {
     const [isCircleBarrier, setIsCircleBarrier] = useState('false');
@@ -103,11 +75,11 @@ function App() {
     };
     
     const handleStringToIntInputChange = (e, callback) => {
-        callback(parseInt(e.target.value));
+        callback(parseFloat(e.target.value));
     }
     const calculateBricks = () => {
         let barrierLengthInches = barrierMeasurement * 12 * brickLayers;
-        if(isCircleBarrier) {
+        if(isCircleBarrier === 'true') {
             barrierLengthInches = Math.PI.toFixed(3) * barrierLengthInches;
         }
         setCalculatedBrickNum(Math.ceil(barrierLengthInches / brickLength));
@@ -143,13 +115,13 @@ function App() {
                     <StyledLegend>Is it a circle?</StyledLegend>
                     <div>
                         <input type={'radio'} value={'false'} id={'barrierTypeLine'} name={'barrierType'}
-                               checked={isCircleBarrier === 'false' ? true : false}
+                               checked={isCircleBarrier === 'false'}
                         onChange={(e) => handleRadioInputChange(e, setIsCircleBarrier)}/>
                         <label htmlFor={'barrierTypeLine'}>No</label>
                     </div>
                     <div>
                         <input type={'radio'} value={'true'} id={'barrierTypeCircle'} name={'barrierType'}
-                               checked={isCircleBarrier === 'true' ? true : false}
+                               checked={isCircleBarrier === 'true'}
                         onChange={(e) => handleRadioInputChange(e, setIsCircleBarrier)}/>
                         <label htmlFor={'barrierTypeCircle'}>Yes</label>
                     </div>
@@ -176,7 +148,7 @@ function App() {
             {calculatedBrickNum > 0 && (
                 <>
                     <CalculatedBricks calculatedBrickNum={calculatedBrickNum}/>
-                    <h2>Pricing</h2>
+                    <h2>Is It Going To Cost An Arm And A Leg?</h2>
                     <StyledInputGroup>
                         <StyledFieldSet>
                             <StyledLegend>Is there a bulk price?</StyledLegend>
@@ -201,7 +173,7 @@ function App() {
                         setBulkPrice={setBulkBrickPrice}/>
                     <StyledInputGroup>
                         <label htmlFor={'brickPrice'}>Price:</label>
-                        <input type={'number'} id={'brickPrice'}
+                        <input type={'number'} step={".01"} id={'brickPrice'}
                             onChange={(e) => handleStringToIntInputChange(e, setRegularBrickPrice)}/>
                     </StyledInputGroup>
                     <StyledSubmitButton onClick={getPrice}>Calculate Price</StyledSubmitButton>
